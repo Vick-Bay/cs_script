@@ -12,4 +12,11 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    sourcemap: false,
+    chunkSizeWarningLimit: 1600,
+  },
+  base: "",
 });

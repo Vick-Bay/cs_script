@@ -1,4 +1,5 @@
 import type { Product, ProductsResponse } from "../types/product";
+import { useAuth } from "../context/AuthContext";
 
 // Cache key for products
 export const PRODUCTS_CACHE_KEY = ["products"] as const;
