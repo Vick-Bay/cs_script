@@ -1,29 +1,23 @@
-export type Branch = {
+export type ProductBranch = {
   Branch: string;
   Quantity: number;
+  Location?: string;
 };
 
 export type Product = {
-  Branches: Array<{
-    Branch: string;
-    Quantity: number;
-  }>;
-  Description: string;
-  GlassType: string;
-  HeightBegin: number;
-  HeightEnd: number;
   ItemNumber: string;
-  ListPrice: number;
-  MetalFinish: string;
+  Description: string;
   ProductType: string;
-  WidthBegin: number;
-  WidthEnd: number;
+  MetalFinish: string;
+  ListPrice: number;
+  Branches: ProductBranch[];
+  IsActive: boolean;
 };
 
 export type ProductsResponse = {
-  Log: string;
   Products: Product[];
+  Log: string;
   RequestStatus: string;
-  RequestStatusvalue: number;
+  RequestStatusValue: number;
   Transaction: number;
 };

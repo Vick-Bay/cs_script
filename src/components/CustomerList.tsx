@@ -10,21 +10,27 @@ import { Pagination } from "./ui/Pagination";
 
 const ITEMS_PER_PAGE = 10;
 
-export function CustomerList() {
+type CustomerListProps = {
+  customers?: Customer[];
+};
+
+export function CustomerList({ customers = [] }: CustomerListProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [branchFilter, setBranchFilter] = useState("");
-  const { data: customers, isLoading } = useCustomers();
+  const { data: customersData, isLoading } = useCustomers();
 
   // Get unique branches for filter
   const branches = useMemo(() => {
-    if (!customers) return [];
-    return Array.from(new Set(customers.map((c) => c.DefaultBranch))).sort();
-  }, [customers]);
+    if (!customersData) return [];
+    return Array.from(
+      new Set(customersData.map((c) => c.DefaultBranch))
+    ).sort();
+  }, [customersData]);
 
   // Filter customers
   const filteredCustomers =
-    customers?.filter(
+    customersData?.filter(
       (customer) =>
         customer?.BillingName?.toLowerCase().includes(search.toLowerCase()) &&
         (!branchFilter || customer?.DefaultBranch === branchFilter)
@@ -35,8 +41,8 @@ export function CustomerList() {
     sortedItems: sortedCustomers,
     sortBy,
     sortConfig,
-  } = useSort(filteredCustomers, {
-    key: null,
+  } = useSort<Customer>(filteredCustomers, {
+    key: null as keyof Customer | null,
     direction: null,
   });
 
@@ -139,11 +145,9 @@ export function CustomerList() {
         <Tbody>
           {paginatedCustomers.map((customer, index) => (
             <Tr
-              key={
-                customer.Code ||
-                customer.D365CustomerCode ||
-                `customer-${index}`
-              }
+              key={`${customer.CustomerId}-${
+                customer.Code || customer.D365CustomerCode || index
+              }`}
             >
               <Td>{customer.BillingName}</Td>
               <Td>{customer.ContactName}</Td>

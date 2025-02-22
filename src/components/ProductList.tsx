@@ -14,12 +14,16 @@ const ITEMS_PER_PAGE = 10;
 const getTotalQuantity = (product: Product) =>
   product.Branches.reduce((sum, branch) => sum + branch.Quantity, 0);
 
-export function ProductList() {
+type ProductListProps = {
+  products?: Product[];
+};
+
+export function ProductList({ products = [] }: ProductListProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [metalFinishFilter, setMetalFinishFilter] = useState("");
   const [productTypeFilter, setProductTypeFilter] = useState("");
-  const { data: products, isLoading, error } = useProducts();
+  const { data: productsData, isLoading, error } = useProducts();
 
   if (isLoading) {
     return (
@@ -42,7 +46,7 @@ export function ProductList() {
     );
   }
 
-  if (!products?.length) {
+  if (!productsData?.length) {
     return (
       <TableLayout title="Products">
         <div className="text-gray-500 p-4">No products found</div>
@@ -52,27 +56,27 @@ export function ProductList() {
 
   // Get unique options for filters
   const filterOptions = useMemo(() => {
-    if (!products) return { metalFinishes: [], productTypes: [] };
+    if (!productsData) return { metalFinishes: [], productTypes: [] };
 
     return {
       metalFinishes: Array.from(
-        new Set(products.map((p) => p.MetalFinish))
+        new Set(productsData.map((p) => p.MetalFinish))
       ).sort(),
       productTypes: Array.from(
-        new Set(products.map((p) => p.ProductType))
+        new Set(productsData.map((p) => p.ProductType))
       ).sort(),
     };
-  }, [products]);
+  }, [productsData]);
 
   // First, prepare products with computed total quantity
   const productsWithTotal = useMemo(() => {
     return (
-      products?.map((product) => ({
+      productsData?.map((product) => ({
         ...product,
         totalQuantity: getTotalQuantity(product),
       })) || []
     );
-  }, [products]);
+  }, [productsData]);
 
   // Then filter all products
   const filteredProducts = productsWithTotal.filter(

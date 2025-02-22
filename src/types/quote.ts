@@ -10,8 +10,8 @@ export type QuoteItem = {
 };
 
 export type Quote = {
+  QuoteId: string;
   Customer: string;
-  ItemNumber: string;
   ItemPrice: number;
   ExpirationDate?: string;
   Status?: string;
@@ -29,6 +29,6 @@ export type QuotesResponse = {
   CustomerQuotes: Quote[];
   Log: string;
   RequestStatus: string;
-  RequestStatusvalue: number;
+  RequestStatusValue: number;
   Transaction: number;
 };

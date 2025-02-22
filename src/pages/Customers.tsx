@@ -3,11 +3,19 @@ import { useCustomers } from "../hooks/useCustomers";
 import { TableSkeleton } from "../components/ui/TableSkeleton";
 
 export function Customers() {
-  const { isLoading } = useCustomers();
+  const { data, isLoading, error } = useCustomers();
 
   if (isLoading) {
     return <TableSkeleton loadingText="Loading customers..." />;
   }
 
-  return <CustomerList />;
+  if (error) {
+    return (
+      <div className="text-red-500">
+        Error loading customers: {error.message}
+      </div>
+    );
+  }
+
+  return <CustomerList customers={data} />;
 }

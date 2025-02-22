@@ -1,19 +1,22 @@
 import { ProductList } from "../components/ProductList";
-import { useProducts } from "../hooks/useData";
+import { useProducts } from "../hooks/useProducts";
 import { TableSkeleton } from "../components/ui/TableSkeleton";
 
 export function Products() {
-  const { isLoading, isError } = useProducts();
-
-  if (isError) {
-    return <div className="text-red-500">Error loading products</div>;
-  }
+  const { data, isLoading, error } = useProducts();
 
   if (isLoading) {
+    return <TableSkeleton loadingText="Loading products..." />;
+  }
+
+  if (error) {
     return (
-      <TableSkeleton columns={6} rows={8} loadingText="Loading products..." />
+      <div className="text-red-500">
+        Error loading products:{" "}
+        {error instanceof Error ? error.message : "Unknown error"}
+      </div>
     );
   }
 
-  return <ProductList />;
+  return <ProductList products={data} />;
 }
