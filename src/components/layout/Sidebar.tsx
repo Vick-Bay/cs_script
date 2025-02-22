@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { type ReactElement, type SVGProps } from "react";
 
 type NavItem = {
   label: string;

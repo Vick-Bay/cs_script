@@ -18,7 +18,7 @@ export function useProducts() {
     queryFn: async () => {
       const response = await fetch("/data/products.json");
       const data = await response.json();
-      return Array.isArray(data) ? data : Object.values(data);
+      return data.Products || [];
     },
   });
 }

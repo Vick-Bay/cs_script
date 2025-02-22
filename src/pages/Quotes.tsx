@@ -1,140 +1,171 @@
 import { useState } from "react";
-import { useQuotes, useCustomers, useProducts } from "../hooks/useData";
-import type { Quote } from "../types";
+import { useQuotes } from "../hooks/useQuotes";
+import { TableLayout } from "../components/ui/TableLayout";
+import { FilterDropdown } from "../components/ui/FilterDropdown";
+import { Table, Thead, Tbody, Tr, Th, Td } from "../components/ui/Table";
+import { SearchInput } from "../components/ui/SearchInput";
+import { Pagination } from "../components/ui/Pagination";
+import { useSort } from "../hooks/useSort";
+import type { Quote } from "../types/quote";
+
+const ITEMS_PER_PAGE = 10;
 
 export function Quotes() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterBy, setFilterBy] = useState<"all" | "pending" | "approved">(
-    "all"
-  );
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const { data: quotes, isLoading, error } = useQuotes();
 
+  // Sort quotes
   const {
-    data: quotes = [],
-    isLoading: quotesLoading,
-    error: quotesError,
-  } = useQuotes();
-  const { data: customers = [] } = useCustomers();
-  const { data: products = [] } = useProducts();
-
-  if (quotesLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (quotesError) {
-    return (
-      <div className="text-red-500 text-center">
-        Error loading quotes: {quotesError.message}
-      </div>
-    );
-  }
-
-  const getCustomerName = (customerId: number): string => {
-    return (
-      customers.find((c) => c.id === customerId)?.name || "Unknown Customer"
-    );
-  };
-
-  const getProductName = (productId: number): string => {
-    return products.find((p) => p.id === productId)?.name || "Unknown Product";
-  };
-
-  const filteredQuotes = quotes.filter((quote: Quote) => {
-    const matchesSearch =
-      getCustomerName(quote.customerId)
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      quote.id.toString().includes(searchTerm);
-
-    if (filterBy === "all") return matchesSearch;
-    return matchesSearch && quote.status === filterBy;
+    sortedItems: sortedQuotes,
+    sortBy,
+    sortConfig,
+  } = useSort(quotes || [], {
+    key: null,
+    direction: null,
   });
 
-  return (
-    <div>
-      <div className="mb-6 space-y-4">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Search quotes..."
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            value={filterBy}
-            aria-label="Filter quotes"
-            onChange={(e) =>
-              setFilterBy(e.target.value as "all" | "pending" | "approved")
-            }
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Quotes</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-          </select>
+  // Filter quotes
+  const filteredQuotes = sortedQuotes.filter(
+    (quote) =>
+      (!filter || quote.Status === filter) &&
+      (quote.Customer.toLowerCase().includes(search.toLowerCase()) ||
+        quote.ItemNumber.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  // Paginate quotes
+  const paginatedQuotes = filteredQuotes.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
+  if (isLoading) {
+    return (
+      <TableLayout title="Quotes">
+        <div className="flex justify-center p-8">
+          <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
         </div>
-      </div>
+      </TableLayout>
+    );
+  }
 
-      <div className="space-y-4">
-        {filteredQuotes.map((quote) => (
-          <div
-            key={quote.id}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Quote #{quote.id}
-                </h3>
-                <p className="text-gray-600">
-                  Customer: {getCustomerName(quote.customerId)}
-                </p>
-              </div>
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  quote.status === "approved"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-yellow-100 text-yellow-800"
-                }`}
-              >
-                {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
-              </span>
-            </div>
+  if (error) {
+    return (
+      <TableLayout title="Quotes">
+        <div className="text-red-500 p-4">Failed to load quotes</div>
+      </TableLayout>
+    );
+  }
 
-            <div className="mt-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
-                Products
-              </h4>
-              <div className="space-y-2">
-                {quote.products.map((item) => (
-                  <div
-                    key={item.productId}
-                    className="flex justify-between items-center text-sm"
-                  >
-                    <span>{getProductName(item.productId)}</span>
-                    <span className="text-gray-600">
-                      Qty: {item.quantity} × ${item.price}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
-              <span className="text-gray-600">
-                Date: {new Date(quote.date).toLocaleDateString()}
-              </span>
-              <span className="text-lg font-semibold text-blue-600">
-                Total: ${quote.total}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+  return (
+    <TableLayout
+      title="Quotes"
+      description="View and manage customer quotes"
+      filters={
+        <div className="space-y-4">
+          <SearchInput
+            value={search}
+            onChange={(value) => {
+              setSearch(value);
+              setPage(1);
+            }}
+            placeholder="Search by customer or item number..."
+          />
+          <FilterDropdown
+            label="Status"
+            value={filter}
+            onChange={(value) => {
+              setFilter(value);
+              setPage(1);
+            }}
+            options={["Active", "Expired", "Pending"]}
+          />
+        </div>
+      }
+    >
+      <Table>
+        <Thead>
+          <tr>
+            <Th
+              sortable
+              sortDirection={
+                sortConfig.key === "Customer" ? sortConfig.direction : null
+              }
+              onClick={() => sortBy("Customer")}
+            >
+              Customer
+            </Th>
+            <Th
+              sortable
+              sortDirection={
+                sortConfig.key === "ItemNumber" ? sortConfig.direction : null
+              }
+              onClick={() => sortBy("ItemNumber")}
+            >
+              Item Number
+            </Th>
+            <Th
+              sortable
+              sortDirection={
+                sortConfig.key === "ItemPrice" ? sortConfig.direction : null
+              }
+              onClick={() => sortBy("ItemPrice")}
+            >
+              Price
+            </Th>
+            <Th
+              sortable
+              sortDirection={
+                sortConfig.key === "ExpirationDate"
+                  ? sortConfig.direction
+                  : null
+              }
+              onClick={() => sortBy("ExpirationDate")}
+            >
+              Expiration Date
+            </Th>
+            <Th
+              sortable
+              sortDirection={
+                sortConfig.key === "Status" ? sortConfig.direction : null
+              }
+              onClick={() => sortBy("Status")}
+            >
+              Status
+            </Th>
+          </tr>
+        </Thead>
+        <Tbody>
+          {paginatedQuotes.map((quote, index) => (
+            <Tr key={`${quote.Customer}-${quote.ItemNumber}-${index}`}>
+              <Td>{quote.Customer}</Td>
+              <Td>{quote.ItemNumber}</Td>
+              <Td>${quote.ItemPrice.toLocaleString()}</Td>
+              <Td>{quote.ExpirationDate || "N/A"}</Td>
+              <Td>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs ${
+                    quote.Status === "Active"
+                      ? "bg-green-100 text-green-800"
+                      : quote.Status === "Expired"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {quote.Status || "Pending"}
+                </span>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+      <Pagination
+        currentPage={page}
+        totalItems={filteredQuotes.length}
+        pageSize={ITEMS_PER_PAGE}
+        onPageChange={setPage}
+      />
+    </TableLayout>
   );
 }

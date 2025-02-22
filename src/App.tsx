@@ -1,39 +1,64 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Routes,
+  Route,
+} from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Navbar } from "./components/layout/Navbar";
-import { Customers } from "./pages/Customers";
+import { Layout } from "./components/Layout";
+import { Dashboard } from "./pages/Dashboard";
 import { Products } from "./pages/Products";
+import { Customers } from "./pages/Customers";
 import { Quotes } from "./pages/Quotes";
-import { Layout } from "./components/layout/Layout";
+import { Inventory } from "./pages/Inventory";
+import { Reports } from "./pages/Reports";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 30, // 30 minutes
+      refetchOnWindowFocus: false,
     },
   },
 });
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "products",
+        element: <Products />,
+      },
+      {
+        path: "customers",
+        element: <Customers />,
+      },
+      {
+        path: "quotes",
+        element: <Quotes />,
+      },
+      {
+        path: "inventory",
+        element: <Inventory />,
+      },
+      {
+        path: "reports",
+        element: <Reports />,
+      },
+    ],
+  },
+]);
+
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Layout>
-          <div className="min-h-screen">
-            <Navbar />
-            <main className="container mx-auto px-4 py-8">
-              <Routes>
-                <Route path="/" element={<Customers />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/quotes" element={<Quotes />} />
-              </Routes>
-            </main>
-          </div>
-        </Layout>
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
