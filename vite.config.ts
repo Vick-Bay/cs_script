@@ -18,5 +18,5 @@ export default defineConfig({
     sourcemap: false,
     chunkSizeWarningLimit: 1600,
   },
-  base: "",
+  base: "/",
 });
