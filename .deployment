@@ -1,2 +1,3 @@
 [config]
 SCM_DO_BUILD_DURING_DEPLOYMENT=true
+POST_DEPLOYMENT_ACTION=npm install serve -g && serve -s dist -l 8080
