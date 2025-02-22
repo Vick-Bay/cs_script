@@ -26,9 +26,8 @@ export function CustomerList() {
   const filteredCustomers =
     customers?.filter(
       (customer) =>
-        (customer.BillingName.toLowerCase().includes(search.toLowerCase()) ||
-          customer.ContactName.toLowerCase().includes(search.toLowerCase())) &&
-        (!branchFilter || customer.DefaultBranch === branchFilter)
+        customer?.BillingName?.toLowerCase().includes(search.toLowerCase()) &&
+        (!branchFilter || customer?.DefaultBranch === branchFilter)
     ) || [];
 
   // Sort customers
@@ -55,7 +54,7 @@ export function CustomerList() {
           setSearch(value);
           setPage(1);
         }}
-        placeholder="Search by name or contact..."
+        placeholder="Search by name..."
       />
       <div className="flex flex-wrap gap-4">
         <FilterDropdown
@@ -138,8 +137,14 @@ export function CustomerList() {
           </tr>
         </Thead>
         <Tbody>
-          {paginatedCustomers.map((customer) => (
-            <Tr key={customer.Code}>
+          {paginatedCustomers.map((customer, index) => (
+            <Tr
+              key={
+                customer.Code ||
+                customer.D365CustomerCode ||
+                `customer-${index}`
+              }
+            >
               <Td>{customer.BillingName}</Td>
               <Td>{customer.ContactName}</Td>
               <Td>{customer.Phone}</Td>

@@ -11,10 +11,9 @@ export type QuoteItem = {
 
 export type Quote = {
   Customer: string;
-  D365Customer: string;
-  ExpirationDate: string;
   ItemNumber: string;
   ItemPrice: number;
+  ExpirationDate?: string;
   Status?: string;
 };
 

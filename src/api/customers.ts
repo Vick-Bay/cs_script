@@ -1,11 +1,12 @@
 import type { Customer, CustomersResponse } from "../types/customer";
 
-// Simulating API delay
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// Cache key for customers
+export const CUSTOMERS_CACHE_KEY = ["customers"] as const;
 
 export async function getCustomers(): Promise<Customer[]> {
-  await delay(500); // Simulate network delay
-  const response = await fetch("/data/customers.json");
+  const response = await fetch(
+    "https://prod-19.centralus.logic.azure.com/workflows/0e4953b745d04b13973d5d6652dc99d7/triggers/manual/paths/invoke/customers?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=mUwBbcwCRWjaYCvpfr5uydn47aoRQxAAcZmim1oNmZU"
+  );
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }

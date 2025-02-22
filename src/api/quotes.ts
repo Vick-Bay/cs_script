@@ -1,10 +1,14 @@
 import type { Quote, QuotesResponse } from "../types/quote";
 
+// Cache key for quotes
+export const QUOTES_CACHE_KEY = ["quotes"] as const;
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function getQuotes(): Promise<Quote[]> {
-  await delay(500);
-  const response = await fetch("/data/quotes.json");
+  const response = await fetch(
+    "https://prod-19.centralus.logic.azure.com/workflows/0e4953b745d04b13973d5d6652dc99d7/triggers/manual/paths/invoke/CustomerQuotes?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=mUwBbcwCRWjaYCvpfr5uydn47aoRQxAAcZmim1oNmZU"
+  );
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -16,7 +20,7 @@ export async function getQuoteById(
   quoteId: string
 ): Promise<Quote | undefined> {
   const quotes = await getQuotes();
-  return quotes.find((q: Quote) => q.QuoteId === quoteId);
+  return quotes.find((q: Quote) => q.Id === quoteId);
 }
 
 export async function getQuotesByCustomerId(
@@ -51,7 +55,7 @@ export function summarizeQuotesByCustomer(quotes: Quote[]) {
       if (!acc[quote.Customer]) {
         acc[quote.Customer] = {
           customer: quote.Customer,
-          d365Customer: quote.D365Customer,
+          d365Customer: quote.CustomerId,
           itemCount: 0,
           totalValue: 0,
         };

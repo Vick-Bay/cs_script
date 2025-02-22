@@ -7,6 +7,7 @@ import { SearchInput } from "../components/ui/SearchInput";
 import { Pagination } from "../components/ui/Pagination";
 import { useSort } from "../hooks/useSort";
 import type { Quote } from "../types/quote";
+import { TableSkeleton } from "../components/ui/TableSkeleton";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -42,10 +43,38 @@ export function Quotes() {
 
   if (isLoading) {
     return (
-      <TableLayout title="Quotes">
-        <div className="flex justify-center p-8">
-          <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
-        </div>
+      <TableLayout
+        title="Quotes"
+        description="View and manage customer quotes"
+        filters={
+          <div className="space-y-4">
+            <SearchInput
+              value={search}
+              onChange={(value) => {
+                setSearch(value);
+                setPage(1);
+              }}
+              placeholder="Search by customer or item number..."
+              disabled
+            />
+            <FilterDropdown
+              label="Status"
+              value={filter}
+              onChange={(value) => {
+                setFilter(value);
+                setPage(1);
+              }}
+              options={["Active", "Expired", "Pending"]}
+              disabled
+            />
+          </div>
+        }
+      >
+        <TableSkeleton
+          columns={5}
+          rows={ITEMS_PER_PAGE}
+          loadingText="Loading quotes..."
+        />
       </TableLayout>
     );
   }

@@ -18,6 +18,7 @@ import {
   calculateTotalQuotesValue,
   summarizeQuotesByCustomer,
 } from "../api/quotes";
+import { Customer } from "../types/customer";
 
 const COLORS = [
   "#0088FE",
@@ -161,12 +162,12 @@ export function Dashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={Object.entries(
-                      customerStats.priceMultiplierRanges
-                    ).map(([range, count]) => ({
-                      name: range,
-                      value: count,
-                    }))}
+                    data={Object.entries(customerStats.priceMultiplierRanges)
+                      .map(([range, count]) => ({
+                        name: range,
+                        value: count,
+                      }))
+                      .sort((a, b) => b.value - a.value)}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -178,9 +179,9 @@ export function Dashboard() {
                     dataKey="value"
                   >
                     {Object.entries(customerStats.priceMultiplierRanges).map(
-                      (_, index) => (
+                      ([range, count], index) => (
                         <Cell
-                          key={`cell-${index}`}
+                          key={`cell-${range}-${count}-${index}`}
                           fill={COLORS[index % COLORS.length]}
                         />
                       )
@@ -206,8 +207,11 @@ export function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {customersArray?.slice(0, 10).map((customer) => (
-                    <tr key={customer.D365CustomerCode} className="border-b">
+                  {customersArray?.slice(0, 10).map((customer, index) => (
+                    <tr
+                      key={`customer-${customer.CustomerId}-${index}`}
+                      className="border-b"
+                    >
                       <td className="py-2">{customer.BillingName}</td>
                       <td className="py-2">
                         {customer.DefaultBranch || "N/A"}
@@ -355,14 +359,14 @@ export function Dashboard() {
                   {productsArray
                     ?.sort((a, b) => b.ListPrice - a.ListPrice)
                     .slice(0, 10)
-                    .map((product) => {
+                    .map((product, index) => {
                       const totalQuantity = product.Branches.reduce(
                         (sum, b) => sum + b.Quantity,
                         0
                       );
                       return (
                         <tr
-                          key={product.ItemNumber}
+                          key={`product-${product.ItemNumber}-${index}`}
                           className="transition-colors duration-150 hover:bg-blue-50/80 hover:shadow-sm cursor-pointer group"
                         >
                           <td className="py-3 px-4 group-hover:text-blue-700">
@@ -560,8 +564,11 @@ export function Dashboard() {
                   {customersArray
                     .sort((a, b) => b.PriceMultiplier - a.PriceMultiplier)
                     .slice(0, 10)
-                    .map((customer) => (
-                      <tr key={customer.CustomerId} className="border-b">
+                    .map((customer, index) => (
+                      <tr
+                        key={`customer-${customer.CustomerId}-${index}`}
+                        className="border-b"
+                      >
                         <td className="py-2">{customer.BillingName}</td>
                         <td className="py-2">
                           {customer.DefaultBranch || "N/A"}
@@ -705,7 +712,7 @@ export function Dashboard() {
                 <tbody>
                   {quotesArray?.slice(0, 10).map((quote, index) => (
                     <tr
-                      key={`${quote.Customer}-${quote.ItemNumber}-${index}`}
+                      key={`quote-${quote.Customer}-${quote.ItemNumber}-${index}`}
                       className="border-b"
                     >
                       <td className="py-2">{quote.Customer}</td>

@@ -1,10 +1,11 @@
 export type Customer = {
   CustomerId: string;
+  D365CustomerCode: string;
   BillingName: string;
-  ContactName: string;
   DefaultBranch: string;
   IsActive: boolean;
   PriceMultiplier: number;
+  ShippingState: string;
 };
 
 export type CustomersResponse = {

@@ -1,11 +1,15 @@
 import type { Product, ProductsResponse } from "../types/product";
 
+// Cache key for products
+export const PRODUCTS_CACHE_KEY = ["products"] as const;
+
 // Simulating API delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function getProducts(): Promise<Product[]> {
-  await delay(500); // Simulate network delay
-  const response = await fetch("/data/products.json");
+  const response = await fetch(
+    "https://prod-19.centralus.logic.azure.com/workflows/0e4953b745d04b13973d5d6652dc99d7/triggers/manual/paths/invoke/products?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=mUwBbcwCRWjaYCvpfr5uydn47aoRQxAAcZmim1oNmZU"
+  );
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
