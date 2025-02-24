@@ -38,6 +38,7 @@ jobs:
         with:
           name: node-app
           path: release.zip
+          retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,7 +54,9 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip -d .
+        run: |
+          mkdir -p deploy
+          unzip release.zip -d deploy/
 
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
@@ -61,5 +64,6 @@ jobs:
         with:
           app-name: "app-csscripts-dev-eastus"
           slot-name: "Production"
-          package: .
+          package: deploy
+          clean: true
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BB14DB2ACB5D46EFA712082DD36BC9A9 }}
