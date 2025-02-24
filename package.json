@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview --port 8080 --host",
-    "start": "node server.js"
+    "preview": "vite preview --port 8080 --host"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
