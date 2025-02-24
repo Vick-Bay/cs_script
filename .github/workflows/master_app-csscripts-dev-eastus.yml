@@ -53,17 +53,11 @@ jobs:
         with:
           name: node-app
 
-      - name: Unzip artifact for deployment
-        run: |
-          mkdir -p deploy
-          unzip release.zip -d deploy/
-
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "app-csscripts-dev-eastus"
           slot-name: "Production"
-          package: deploy
-          clean: true
+          package: release.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BB14DB2ACB5D46EFA712082DD36BC9A9 }}
