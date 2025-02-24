@@ -22,7 +22,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Create a root component that includes both providers
 function Root() {
   return (
     <AuthProvider>

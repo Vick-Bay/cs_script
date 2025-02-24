@@ -1,24 +1,18 @@
 import { ReactNode } from "react";
 
-type Column<T> = {
-  header: string;
-  accessor: keyof T;
-  cell?: (value: T[keyof T]) => string;
-};
-
-export type TableLayoutProps<T> = {
+export type TableLayoutProps = {
   title?: string;
   description?: string;
   filters?: ReactNode;
   children: ReactNode;
 };
 
-export function TableLayout<T>({
+export function TableLayout({
   title,
   description,
   filters,
   children,
-}: TableLayoutProps<T>) {
+}: TableLayoutProps) {
   return (
     <div className="space-y-6">
       {title && (

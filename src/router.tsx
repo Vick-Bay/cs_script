@@ -14,5 +14,4 @@ export const router = createBrowserRouter([
       </div>
     ),
   },
-  // Add other routes here...
 ]);

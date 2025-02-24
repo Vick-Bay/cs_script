@@ -37,21 +37,6 @@ export async function getQuotesByCustomerId(
   return quotes.filter((q) => q.Customer === customerId);
 }
 
-export async function getQuoteStats(apiKey: string) {
-  const quotes = await getQuotes(apiKey);
-
-  const activeQuotes = quotes.filter(
-    (q) => !q.ExpirationDate || new Date(q.ExpirationDate) > new Date()
-  );
-
-  return {
-    totalQuotes: quotes.length,
-    activeQuotes: activeQuotes.length,
-    totalValue: activeQuotes.reduce((sum, q) => sum + q.ItemPrice, 0),
-    customers: [...new Set(quotes.map((q) => q.Customer))],
-  };
-}
-
 // Helper function to get quotes summary by customer
 export function summarizeQuotesByCustomer(quotes: Quote[]) {
   return quotes.reduce(

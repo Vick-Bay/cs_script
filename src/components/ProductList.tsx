@@ -14,11 +14,7 @@ const ITEMS_PER_PAGE = 10;
 const getTotalQuantity = (product: Product) =>
   product.Branches.reduce((sum, branch) => sum + branch.Quantity, 0);
 
-type ProductListProps = {
-  products?: Product[];
-};
-
-export function ProductList({ products = [] }: ProductListProps) {
+export function ProductList() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [metalFinishFilter, setMetalFinishFilter] = useState("");
@@ -40,7 +36,7 @@ export function ProductList({ products = [] }: ProductListProps) {
       <TableLayout title="Products">
         <div className="text-red-500 p-4">
           Failed to load products:{" "}
-          {error instanceof Error ? error.message : "Unknown error"}
+          {error.message}
         </div>
       </TableLayout>
     );
@@ -102,8 +98,6 @@ export function ProductList({ products = [] }: ProductListProps) {
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
-
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
   const filters = (
     <>

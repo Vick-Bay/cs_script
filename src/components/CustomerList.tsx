@@ -10,11 +10,7 @@ import { Pagination } from "./ui/Pagination";
 
 const ITEMS_PER_PAGE = 10;
 
-type CustomerListProps = {
-  customers?: Customer[];
-};
-
-export function CustomerList({ customers = [] }: CustomerListProps) {
+export function CustomerList() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [branchFilter, setBranchFilter] = useState("");

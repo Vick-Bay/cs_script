@@ -1,5 +1,4 @@
 import type { Product, ProductsResponse } from "../types/product";
-import { useAuth } from "../context/AuthContext";
 
 // Cache key for products
 export const PRODUCTS_CACHE_KEY = ["products"] as const;
@@ -42,38 +41,4 @@ export async function getProductsByBranch(
   return products.filter((p) =>
     p.Branches.some((b) => b.Branch === branchCode)
   );
-}
-
-// Helper functions for dashboard
-export async function getProductStats(apiKey: string) {
-  const products = await getProducts(apiKey);
-
-  // Filter out products with zero price or no quantity
-  const activeProducts = products.filter(
-    (p: Product) =>
-      p.ListPrice > 0 &&
-      p.Branches.some((b: { Quantity: number }) => b.Quantity > 0)
-  );
-
-  return {
-    totalProducts: activeProducts.length,
-    activeProducts,
-    branchCodes: [
-      ...new Set(
-        activeProducts.flatMap((p: Product) =>
-          p.Branches.map((b: { Branch: string }) => b.Branch)
-        )
-      ),
-    ],
-    metalFinishes: [
-      ...new Set(
-        activeProducts.map((p: Product) => p.MetalFinish).filter(Boolean)
-      ),
-    ],
-    productTypes: [
-      ...new Set(
-        activeProducts.map((p: Product) => p.ProductType).filter(Boolean)
-      ),
-    ],
-  };
 }

@@ -1,4 +1,4 @@
-import { type ReactElement, type HTMLProps } from "react";
+import { type HTMLProps } from "react";
 
 type CardProps = HTMLProps<HTMLDivElement>;
 

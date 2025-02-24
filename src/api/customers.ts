@@ -20,33 +20,3 @@ export async function getCustomers(apiKey: string): Promise<Customer[]> {
   const data: CustomersResponse = await response.json();
   return data.Customers || [];
 }
-
-export async function getCustomerById(
-  apiKey: string,
-  customerId: string
-): Promise<Customer | undefined> {
-  const customers = await getCustomers(apiKey);
-  return customers.find((c) => c.CustomerId === customerId);
-}
-
-export async function getCustomersByBranch(
-  apiKey: string,
-  branchCode: string
-): Promise<Customer[]> {
-  const customers = await getCustomers(apiKey);
-  return customers.filter((c) => c.DefaultBranch === branchCode);
-}
-
-export async function getCustomerStats(apiKey: string) {
-  const customers = await getCustomers(apiKey);
-  const activeCustomers = customers.filter((c) => c.IsActive);
-
-  return {
-    totalCustomers: customers.length,
-    activeCustomers: activeCustomers.length,
-    branches: [...new Set(customers.map((c) => c.DefaultBranch))],
-    topCustomers: activeCustomers
-      .sort((a, b) => b.PriceMultiplier - a.PriceMultiplier)
-      .slice(0, 10),
-  };
-}

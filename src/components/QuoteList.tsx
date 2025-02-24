@@ -7,7 +7,7 @@ import { FilterDropdown } from "./ui/FilterDropdown";
 import { Pagination } from "./ui/Pagination";
 import { useSort } from "../hooks/useSort";
 
-const ITEMS_PER_PAGE = 10; // Changed back to 10 items per page
+const ITEMS_PER_PAGE = 10;
 
 type QuoteListProps = {
   quotes?: Quote[];
@@ -43,7 +43,6 @@ export function QuoteList({ quotes = [] }: QuoteListProps) {
   });
 
   // Calculate pagination
-  const totalPages = Math.ceil(sortedQuotes.length / ITEMS_PER_PAGE);
   const paginatedQuotes = sortedQuotes.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE

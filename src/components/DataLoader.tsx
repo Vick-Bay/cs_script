@@ -15,7 +15,10 @@ export function DataLoader({ children }: LoaderProps) {
     queries: [
       {
         queryKey: PRODUCTS_CACHE_KEY,
-        queryFn: () => getProducts(auth.apiKey),
+        queryFn: () => {
+          if (!auth.apiKey) throw new Error("No API key");
+          return getProducts(auth.apiKey);
+        },
         enabled: !!auth.apiKey,
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
@@ -23,7 +26,7 @@ export function DataLoader({ children }: LoaderProps) {
       },
       {
         queryKey: QUOTES_CACHE_KEY,
-        queryFn: () => getQuotes(auth.apiKey),
+        queryFn: () => getQuotes(auth.apiKey as string),
         enabled: !!auth.apiKey,
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
@@ -31,7 +34,7 @@ export function DataLoader({ children }: LoaderProps) {
       },
       {
         queryKey: CUSTOMERS_CACHE_KEY,
-        queryFn: () => getCustomers(auth.apiKey),
+        queryFn: () => getCustomers(auth.apiKey as string),
         enabled: !!auth.apiKey,
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
