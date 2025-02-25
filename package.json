@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview --port 8080 --host",
-    "start": "serve -s dist"
+    "start": "node server.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -21,7 +21,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
     "recharts": "^2.12.0",
-    "serve": "^14.0.0"
+    "serve": "^14.2.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

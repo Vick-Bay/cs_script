@@ -28,19 +28,26 @@ jobs:
           npm install
           npm run build
 
-      - name: Copy web.config to dist
-        run: cp web.config dist/
+      - name: Prepare deployment files
+        run: |
+          mkdir deploy
+          cp -r dist deploy/
+          cp package.json deploy/
+          cp package-lock.json deploy/
+          cp server.js deploy/
+          cd deploy
+          npm install --production
 
       - name: Zip artifact for deployment
         run: |
-          cd dist
+          cd deploy
           zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: dist/release.zip
+          path: deploy/release.zip
 
   deploy:
     runs-on: ubuntu-latest
