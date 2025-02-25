@@ -1,5 +1,13 @@
 import type { Customer, CustomersResponse } from "../types/customer";
 
+const SALES_REPS = [
+  "Greg Kelly",
+  "House Account",
+  "Kiley Buchanan",
+  "Natalie Musso",
+  "Robert Dedrick",
+] as const;
+
 // Cache key for customers
 export const CUSTOMERS_CACHE_KEY = ["customers"] as const;
 
@@ -18,5 +26,10 @@ export async function getCustomers(apiKey: string): Promise<Customer[]> {
   }
 
   const data: CustomersResponse = await response.json();
-  return data.Customers || [];
+  console.log("customer data", data);
+
+  return (data.Customers || []).map((customer) => ({
+    ...customer,
+    SalesRep: SALES_REPS[Math.floor(Math.random() * SALES_REPS.length)],
+  }));
 }

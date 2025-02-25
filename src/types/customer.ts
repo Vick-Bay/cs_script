@@ -8,6 +8,14 @@ export type Customer = {
   IsActive: boolean;
   Code: string;
   D365CustomerCode: string;
+  ShippingAddress1: string;
+  ShippingAddress2: string;
+  ShippingCityState: string;
+  ShippingName: string;
+  ShippingNotes: string;
+  ShippingState: string;
+  ShippingZip: string;
+  SalesRep: string;
 };
 
 export type CustomersResponse = {

@@ -16,8 +16,8 @@ export function Login() {
     setIsLoading(true);
 
     try {
-      const { apiKey, expiresAt } = await authenticate(password);
-      login(apiKey, expiresAt);
+      const { apiKey, expiresAt, access_token } = await authenticate(password);
+      login(apiKey, expiresAt, access_token);
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid password");
@@ -30,7 +30,7 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            Enter password to access
+          Enter password to access
         </h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>

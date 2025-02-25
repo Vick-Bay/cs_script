@@ -5,7 +5,7 @@ import type { AuthState } from "../types/auth";
 
 const AuthContext = createContext<{
   auth: AuthState;
-  login: (apiKey: string, expiresAt: number) => void;
+  login: (apiKey: string, expiresAt: number, access_token: string) => void;
   logout: () => void;
 } | null>(null);
 
@@ -30,8 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [auth.expiresAt]);
 
-  const login = (apiKey: string, expiresAt: number) => {
-    const authState = { isAuthenticated: true, apiKey, expiresAt };
+  const login = (apiKey: string, expiresAt: number, access_token: string) => {
+    const authState = {
+      isAuthenticated: true,
+      apiKey,
+      expiresAt,
+      access_token,
+    };
     setAuth(authState);
     localStorage.setItem("auth", JSON.stringify(authState));
   };
