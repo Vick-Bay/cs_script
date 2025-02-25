@@ -36,12 +36,13 @@ jobs:
           cp package-lock.json deploy/
           cp server.js deploy/
           cd deploy
-          npm install --production
+          npm install --omit=dev
+          rm package*.json
 
       - name: Zip artifact for deployment
         run: |
           cd deploy
-          zip release.zip ./* -r
+          zip -r release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
