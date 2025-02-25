@@ -130,9 +130,15 @@ export function Dashboard() {
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={Object.entries(customerStats.branchDistribution)
-                    .map(([branch, count]) => ({
-                      branch,
+                  data={Object.entries(
+                    customersArray.reduce((acc, customer) => {
+                      const state = customer.ShippingState || "Unknown";
+                      acc[state] = (acc[state] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>)
+                  )
+                    .map(([state, count]) => ({
+                      state,
                       count,
                     }))
                     .sort((a, b) => b.count - a.count)}
@@ -140,7 +146,7 @@ export function Dashboard() {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
-                    dataKey="branch"
+                    dataKey="state"
                     angle={-45}
                     textAnchor="end"
                     height={60}

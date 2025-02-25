@@ -26,7 +26,6 @@ export async function getCustomers(apiKey: string): Promise<Customer[]> {
   }
 
   const data: CustomersResponse = await response.json();
-  console.log("customer data", data);
 
   return (data.Customers || []).map((customer) => ({
     ...customer,

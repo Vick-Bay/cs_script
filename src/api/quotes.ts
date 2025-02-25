@@ -18,7 +18,7 @@ export async function getQuotes(apiKey: string): Promise<Quote[]> {
   }
 
   const data: QuotesResponse = await response.json();
-  console.log("quote data", data);
+
   return data.CustomerQuotes || [];
 }
 
