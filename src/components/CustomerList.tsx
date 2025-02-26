@@ -8,6 +8,7 @@ import { TableLayout } from "./ui/TableLayout";
 import { SearchInput } from "./ui/SearchInput";
 import { Pagination } from "./ui/Pagination";
 import { OrdersModal } from "./OrdersModal";
+import { MapModal } from "./MapModal";
 import { getCustomerOrders } from "../api/dynamics";
 import { useAuth } from "../context/AuthContext";
 import type { OrderResponse } from "../types/orders";
@@ -21,7 +22,10 @@ export function CustomerList() {
   const [branchFilter, setBranchFilter] = useState("");
   const [salesRepFilter, setSalesRepFilter] = useState("");
   const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
+  const [selectedMapCustomer, setSelectedMapCustomer] =
+    useState<Customer | null>(null);
   const [orders, setOrders] = useState<OrderResponse | null>(null);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const { auth } = useAuth();
@@ -232,6 +236,7 @@ export function CustomerList() {
               >
                 Sales Rep
               </Th>
+              <Th>Map</Th>
               <Th>Actions</Th>
             </tr>
           </Thead>
@@ -254,6 +259,17 @@ export function CustomerList() {
                 <Td>{customer.DefaultBranch}</Td>
                 <Td>{(customer.PriceMultiplier * 100).toFixed(0)}%</Td>
                 <Td>{customer.SalesRep}</Td>
+                <Td>
+                  <button
+                    onClick={() => {
+                      setSelectedMapCustomer(customer);
+                      setIsMapModalOpen(true);
+                    }}
+                    className="text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Map it
+                  </button>
+                </Td>
                 <Td>
                   <button
                     onClick={() => handleViewOrders(customer.D365CustomerCode)}
@@ -283,6 +299,15 @@ export function CustomerList() {
         }}
         orders={orders}
         isLoading={isLoadingOrders}
+      />
+
+      <MapModal
+        isOpen={isMapModalOpen}
+        onClose={() => {
+          setIsMapModalOpen(false);
+          setSelectedMapCustomer(null);
+        }}
+        customer={selectedMapCustomer}
       />
     </>
   );
